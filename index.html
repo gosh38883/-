@@ -1,0 +1,923 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>夢幻注音符號冒險闖關</title>
+    <!-- Tailwind CSS for Responsive UI -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts for cute aesthetic -->
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Noto+Sans+TC:wght@500;700;900&family=Mochiy+Pop+One&display=swap" rel="stylesheet">
+    
+    <style>
+        body {
+            font-family: 'Noto Sans TC', 'Fredoka', sans-serif;
+            touch-action: manipulation;
+            user-select: none;
+            -webkit-user-select: none;
+            -webkit-touch-callout: none;
+            background: linear-gradient(135deg, #ffd1dc 0%, #e0c3fc 50%, #8ec5fc 100%);
+            background-attachment: fixed;
+            min-h-screen;
+        }
+        .bopomofo-font {
+            font-family: 'Mochiy Pop One', 'Noto Sans TC', sans-serif;
+            font-weight: 900;
+        }
+        .cute-card {
+            background: rgba(255, 255, 255, 0.75);
+            backdrop-filter: blur(12px);
+            border: 4px solid rgba(255, 255, 255, 0.9);
+            box-shadow: 0 10px 25px rgba(236, 72, 153, 0.15);
+        }
+        .cute-btn-pink {
+            background: linear-gradient(180deg, #ff9a9e 0%, #fecfef 100%);
+            border-bottom: 5px solid #f472b6;
+            color: #831843;
+        }
+        .cute-btn-pink:active {
+            transform: translateY(2px);
+            border-bottom-width: 2px;
+        }
+        .cute-btn-purple {
+            background: linear-gradient(180deg, #a1c4fd 0%, #c2e9fb 100%);
+            border-bottom: 5px solid #60a5fa;
+            color: #1e3a8a;
+        }
+        .bounce-gentle {
+            animation: bounceGentle 2.5s infinite;
+        }
+        @keyframes bounceGentle {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-8px) rotate(2deg); }
+        }
+        .pulse-glow {
+            animation: pulseGlow 2s infinite alternate;
+        }
+        @keyframes pulseGlow {
+            from { box-shadow: 0 0 15px #f472b6, 0 0 30px #f472b6; }
+            to { box-shadow: 0 0 30px #f472b6, 0 0 45px #f472b6; }
+        }
+        .pop-in {
+            animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        @keyframes popIn {
+            0% { transform: scale(0.7); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        .shake-error {
+            animation: shakeError 0.5s ease-in-out;
+        }
+        @keyframes shakeError {
+            0%, 100% { transform: translateX(0); }
+            20%, 60% { transform: translateX(-10px); }
+            40%, 80% { transform: translateX(10px); }
+        }
+    </style>
+</head>
+<body class="text-slate-800 min-h-screen flex flex-col justify-between overflow-x-hidden selection:bg-none">
+
+    <!-- Top Bar Navigation with Pastel Theme -->
+    <header class="w-full bg-white/70 backdrop-blur-md border-b-4 border-pink-200 p-3 flex justify-between items-center sticky top-0 z-50 shadow-sm">
+        <div class="flex items-center space-x-3 cursor-pointer" onclick="switchTab('home')">
+            <div class="bg-gradient-to-tr from-pink-400 to-purple-400 text-white p-2.5 rounded-3xl text-xl font-bold flex items-center justify-center w-12 h-12 shadow-md bounce-gentle">
+                <i class="fa-solid fa-wand-magic-sparkles text-2xl"></i>
+            </div>
+            <div>
+                <h1 class="text-xl md:text-2xl font-black text-pink-600 tracking-wide drop-shadow-sm">夢幻注音國王</h1>
+                <p class="text-xs text-purple-500 font-bold hidden sm:block">✨ 少女冒險童話篇 ✨</p>
+            </div>
+        </div>
+
+        <!-- Star Balance & Menu Buttons -->
+        <div class="flex items-center space-x-2 md:space-x-3">
+            <div class="flex items-center bg-pink-100/80 border-2 border-pink-300 rounded-full px-4 py-1.5 shadow-inner">
+                <i class="fa-solid fa-star text-amber-400 text-2xl md:text-3xl mr-1.5 drop-shadow"></i>
+                <span id="star-count" class="text-2xl font-black text-pink-600">0</span>
+            </div>
+
+            <button onclick="switchTab('map')" class="bg-purple-400 hover:bg-purple-300 active:scale-95 text-white px-3.5 py-2 rounded-2xl border-b-4 border-purple-600 flex items-center font-bold text-sm md:text-base shadow-md">
+                <i class="fa-solid fa-map-marked-alt text-lg mr-1.5"></i> 地圖
+            </button>
+
+            <button onclick="switchTab('collection')" class="bg-pink-400 hover:bg-pink-300 active:scale-95 text-white px-3.5 py-2 rounded-2xl border-b-4 border-pink-600 flex items-center font-bold text-sm md:text-base shadow-md">
+                <i class="fa-solid fa-heart text-lg mr-1.5"></i> 收藏
+            </button>
+        </div>
+    </header>
+
+    <!-- Main Content Container -->
+    <main class="flex-grow container mx-auto p-4 flex flex-col justify-center items-center relative">
+
+        <!-- VIEW 0: DREAMY HOME COVER SCREEN -->
+        <section id="view-home" class="w-full max-w-3xl flex flex-col items-center text-center py-6">
+            <div class="cute-card rounded-3xl p-8 md:p-12 w-full flex flex-col items-center relative overflow-hidden my-auto pop-in">
+                <!-- Floating Decorative Icons -->
+                <div class="absolute -top-4 -left-4 text-pink-300 text-6xl opacity-40 bounce-gentle"><i class="fa-solid fa-cloud"></i></div>
+                <div class="absolute -bottom-4 -right-4 text-purple-300 text-7xl opacity-40 bounce-gentle" style="animation-delay: 1s;"><i class="fa-solid fa-sparkles"></i></div>
+
+                <div class="inline-block px-4 py-1.5 bg-pink-200/70 text-pink-700 font-bold rounded-full text-sm mb-4 border border-pink-300">
+                    🌸 專屬夢幻注音學習之旅 🌸
+                </div>
+
+                <h1 class="text-4xl md:text-6xl font-black text-transparent bg-clip-text bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500 mb-4 tracking-wider drop-shadow-sm">
+                    注音符號夢幻大冒險
+                </h1>
+
+                <p class="text-slate-600 text-base md:text-lg font-medium max-w-md mb-8 leading-relaxed">
+                    伴隨粉彩魔法與可愛玩具夥伴，開始你的浪漫注音探索！聽音、配對、拼讀，收集獨一無二的夢幻角色吧！
+                </p>
+
+                <!-- Hero Graphic Icons -->
+                <div class="flex justify-center items-center space-x-6 text-5xl md:text-6xl mb-8">
+                    <span class="bounce-gentle">🎀</span>
+                    <span class="bounce-gentle" style="animation-delay: 0.3s;">🦄</span>
+                    <span class="bounce-gentle" style="animation-delay: 0.6s;">🧸</span>
+                    <span class="bounce-gentle" style="animation-delay: 0.9s;">👑</span>
+                </div>
+
+                <button onclick="switchTab('map')" class="cute-btn-pink active:scale-95 text-pink-950 font-black text-2xl py-4 px-10 rounded-3xl shadow-xl hover:brightness-105 transition-all flex items-center border-b-8 border-pink-400">
+                    <i class="fa-solid fa-play text-xl mr-3"></i> 開始夢幻冒險
+                </button>
+            </div>
+        </section>
+
+        <!-- VIEW 1: MAP SCREEN -->
+        <section id="view-map" class="w-full max-w-4xl flex flex-col items-center hidden">
+            <div class="text-center my-4">
+                <h2 class="text-3xl md:text-4xl font-black text-pink-600 drop-shadow-sm mb-1">💖 夢幻冒險地圖 💖</h2>
+                <p class="text-purple-600 text-sm md:text-base font-bold">輕觸夢幻關卡，開啟注音探索之旅！</p>
+            </div>
+
+            <!-- Stages Grid Map -->
+            <div class="w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 my-4 px-2" id="stages-container">
+                <!-- Dynamic Stage Cards rendered by JS -->
+            </div>
+        </section>
+
+        <!-- VIEW 2: GAMEPLAY SCREEN -->
+        <section id="view-game" class="w-full max-w-2xl cute-card rounded-3xl p-5 md:p-8 hidden flex flex-col items-center relative pop-in">
+            
+            <!-- Game Top Status Bar -->
+            <div class="w-full flex justify-between items-center mb-4 pb-3 border-b-2 border-pink-200">
+                <button onclick="switchTab('map')" class="text-pink-500 hover:text-pink-700 p-2 font-bold text-sm md:text-base rounded-xl flex items-center">
+                    <i class="fa-solid fa-arrow-left mr-1"></i> 返回地圖
+                </button>
+                <div class="text-center">
+                    <span id="game-stage-title" class="text-lg md:text-xl font-black text-pink-600">關卡名稱</span>
+                    <div class="text-xs text-purple-500 font-bold" id="game-progress-text">題目 1 / 5</div>
+                </div>
+                <!-- Speaker Repeat Button -->
+                <button id="btn-repeat-speech" onclick="repeatInstructionSpeech()" class="bg-pink-400 hover:bg-pink-300 active:scale-95 text-white px-3 py-2 rounded-2xl font-bold flex items-center shadow border-b-4 border-pink-600 text-sm md:text-base">
+                    <i class="fa-solid fa-volume-high mr-1.5"></i> 再聽一次
+                </button>
+            </div>
+
+            <!-- Instruction Banner -->
+            <div class="w-full bg-pink-100/80 rounded-2xl p-4 mb-6 border-2 border-pink-300 text-center shadow-inner">
+                <p id="game-instruction" class="text-lg md:text-xl font-bold text-pink-800">聽聲音，選出正確的注音符號！</p>
+            </div>
+
+            <!-- Main Interactive Game Area -->
+            <div id="game-interactive-area" class="w-full flex-grow flex flex-col items-center justify-center min-h-[260px] my-2">
+                <!-- Dynamic Quiz Options generated by JS -->
+            </div>
+
+            <!-- Helper Audio & Visual Encouragement Bar -->
+            <div id="game-feedback-box" class="w-full min-h-[50px] mt-4 flex items-center justify-center text-lg font-bold text-center rounded-2xl p-2 transition-all">
+                <!-- Dynamic feedback text -->
+            </div>
+        </section>
+
+        <!-- VIEW 3: CHARACTER COLLECTION -->
+        <section id="view-collection" class="w-full max-w-4xl flex flex-col items-center hidden">
+            <div class="text-center my-4">
+                <h2 class="text-3xl md:text-4xl font-black text-pink-600 drop-shadow-sm mb-1">🎀 夢幻夥伴殿堂 🎀</h2>
+                <p class="text-purple-600 text-sm md:text-base font-bold">收集魔法星星，解鎖所有可愛夥伴與玩具！</p>
+            </div>
+
+            <!-- Character Grid -->
+            <div class="w-full grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 my-4" id="characters-container">
+                <!-- Dynamic Characters rendered by JS -->
+            </div>
+        </section>
+
+        <!-- MODAL: STAGE COMPLETED REWARD -->
+        <div id="modal-success" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+            <div class="bg-white/95 border-4 border-pink-300 rounded-3xl p-6 md:p-8 max-w-md w-full text-center shadow-2xl pop-in relative">
+                
+                <div class="text-6xl mb-2 bounce-gentle">👑</div>
+                <h3 class="text-3xl font-black text-pink-600 mb-1">恭喜美麗通關！</h3>
+                <p class="text-purple-600 font-bold text-sm mb-4">你做得太棒了！獲得了夢幻星星！</p>
+
+                <div class="flex justify-center items-center space-x-2 my-4">
+                    <i class="fa-solid fa-star text-4xl md:text-5xl text-amber-400 animate-pulse"></i>
+                    <span id="modal-stars-gained" class="text-4xl font-black text-pink-600">+3</span>
+                </div>
+
+                <!-- Unlocked Character Preview if any -->
+                <div id="unlocked-character-banner" class="bg-pink-100 border-2 border-pink-300 rounded-2xl p-3 my-4 hidden">
+                    <p class="text-pink-600 font-bold text-xs">🎉 解鎖夢幻新夥伴！</p>
+                    <div id="unlocked-char-content" class="flex items-center justify-center space-x-3 mt-1">
+                        <!-- Icon & Name -->
+                    </div>
+                </div>
+
+                <!-- Encouraging Quote -->
+                <div class="bg-purple-50 rounded-2xl p-3 mb-6 text-purple-700 font-bold text-sm border border-purple-200" id="modal-encouragement">
+                    "飛向美麗夢幻星空！你真是個優雅的注音小公主！"
+                </div>
+
+                <button onclick="switchTab('map')" class="w-full bg-gradient-to-r from-pink-400 to-purple-400 hover:from-pink-300 hover:to-purple-300 active:scale-95 text-white text-xl font-black py-3.5 px-6 rounded-2xl border-b-4 border-purple-500 shadow-lg">
+                    繼續夢幻冒險 <i class="fa-solid fa-arrow-right ml-1"></i>
+                </button>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="w-full bg-white/50 backdrop-blur-md border-t border-pink-200 p-3 text-center text-xs text-pink-600 font-bold">
+        適合女孩與幼兒之夢幻注音符號冒險闖關 ｜ 學習紀錄已備份於此裝置
+    </footer>
+
+    <!-- JavaScript Application Core Logic -->
+    <script>
+        
+        // --- 1. GAME STATE & LOCAL STORAGE ---
+        const LOCAL_STORAGE_KEY = 'zhuyin_dream_adventure_v2';
+
+        let gameState = {
+            stars: 0,
+            unlockedStages: [1], // Stage IDs unlocked
+            stageScores: {},     // Stage best stars
+            unlockedChars: ['solider'] // Default starting character unlocked
+        };
+
+        // --- ZHUYIN PRONUNCIATION DICTIONARY FOR TTS FIX ---
+        // TTS engines often mispronounce raw Bopomofo characters like "ㄅ".
+        // We map each symbol to natural, kid-friendly phonetic hints for Taiwan zh-TW TTS.
+        const ZHUYIN_PRONUNCIATION_MAP = {
+            "ㄅ": "ㄅ，包包的ㄅ",
+            "ㄆ": "ㄆ，撲克牌的ㄆ",
+            "ㄇ": "ㄇ，貓咪的ㄇ",
+            "ㄈ": "ㄈ，飛機的ㄈ",
+            "ㄉ": "ㄉ，大象的ㄉ",
+            "ㄊ": "ㄊ，兔子的ㄊ",
+            "ㄋ": "ㄋ，牛奶的ㄋ",
+            "ㄌ": "ㄌ，喇叭的ㄌ",
+            "ㄍ": "ㄍ，哥哥的ㄍ",
+            "ㄎ": "ㄎ，恐龍的ㄎ",
+            "ㄏ": "ㄏ，螃蟹的ㄏ",
+            "ㄐ": "ㄐ，氣球的ㄐ",
+            "ㄑ": "ㄑ，七顆的ㄑ",
+            "ㄒ": "ㄒ，西瓜的ㄒ",
+            "ㄓ": "ㄓ，蜘蛛的ㄓ",
+            "ㄔ": "ㄔ，湯匙的ㄔ",
+            "ㄕ": "ㄕ，獅子的ㄕ",
+            "ㄖ": "ㄖ，太陽的ㄖ",
+            "ㄗ": "ㄗ",
+            "ㄘ": "ㄘ",
+            "ㄙ": "ㄙ",
+            "ㄚ": "ㄚ，阿姨的ㄚ",
+            "ㄛ": "ㄛ，公雞ㄛㄛㄛ",
+            "ㄜ": "ㄜ，天鵝的ㄜ",
+            "ㄝ": "ㄝ，椰子樹的ㄝ",
+            "ㄞ": "ㄞ",
+            "ㄟ": "ㄟ",
+            "ㄠ": "ㄠ",
+            "ㄡ": "ㄡ",
+            "ㄢ": "ㄢ",
+            "ㄣ": "ㄣ",
+            "ㄤ": "ㄤ",
+            "ㄥ": "ㄥ",
+            "ㄦ": "ㄦ",
+            "ㄧ": "ㄧ，衣服的ㄧ",
+            "ㄨ": "ㄨ",
+            "ㄩ": "ㄩ"
+        };
+
+        // --- 2. LEARNING STAGES DEFINITION ---
+        const STAGES = [
+            {
+                id: 1,
+                name: "1. 唇音粉紅城堡",
+                subtitle: "認識：ㄅ、ㄆ、ㄇ、ㄈ",
+                symbols: ["ㄅ", "ㄆ", "ㄇ", "ㄈ"],
+                type: "listen_choose",
+                rewardStar: 3,
+                rewardCharId: "solider",
+                description: "聽聲音，選出正確的唇音符號！"
+            },
+            {
+                id: 2,
+                name: "2. 韻母夢幻花園",
+                subtitle: "認識：ㄚ、ㄛ、ㄜ、ㄝ",
+                symbols: ["ㄚ", "ㄛ", "ㄜ", "ㄝ"],
+                type: "match_pairs",
+                rewardStar: 3,
+                rewardCharId: "slinky",
+                description: "點擊配對相同的韻母符號！"
+            },
+            {
+                id: 3,
+                name: "3. 舌尖彩虹星空",
+                subtitle: "認識：ㄉ、ㄊ、ㄋ、ㄌ",
+                symbols: ["ㄉ", "ㄊ", "ㄋ", "ㄌ"],
+                type: "listen_choose",
+                rewardStar: 4,
+                rewardCharId: "piggy",
+                description: "聽語音發音，擊中正確的夢幻星號！"
+            },
+            {
+                id: 4,
+                name: "4. 齒音音樂舞會",
+                subtitle: "認識：ㄍ、ㄎ、ㄏ、ㄐ、ㄑ、ㄒ",
+                symbols: ["ㄍ", "ㄎ", "ㄏ", "ㄐ", "ㄑ", "ㄒ"],
+                type: "listen_choose",
+                rewardStar: 4,
+                rewardCharId: "rex",
+                description: "聽聽看，哪一個是正確的注音聲音？"
+            },
+            {
+                id: 5,
+                name: "5. 翹舌與平舌皇冠",
+                subtitle: "對決：ㄓ/ㄗ、ㄔ/ㄘ、ㄕ/ㄙ",
+                symbols: ["ㄓ", "ㄗ", "ㄔ", "ㄘ", "ㄕ", "ㄙ"],
+                type: "listen_choose",
+                rewardStar: 5,
+                rewardCharId: "alien",
+                description: "注意聽！舌頭捲起來還是平平的？"
+            },
+            {
+                id: 6,
+                name: "6. 獨角獸魔法拼讀",
+                subtitle: "雙音拼讀：聲母 + 韻母",
+                type: "pindu_basic",
+                questions: [
+                    { pinyin: ["ㄅ", "ㄚ"], result: "ㄅㄚ", label: "爸" },
+                    { pinyin: ["ㄇ", "ㄚ"], result: "ㄇㄚ", label: "媽" },
+                    { pinyin: ["ㄆ", "ㄛ"], result: "ㄆㄛ", label: "婆" },
+                    { pinyin: ["ㄉ", "ㄚ"], result: "ㄉㄚ", label: "大" },
+                    { pinyin: ["ㄌ", "ㄨ"], result: "ㄌㄨ", label: "路" }
+                ],
+                rewardStar: 5,
+                rewardCharId: "woody",
+                description: "魔法相撞，會變成什麼甜美聲音呢？"
+            },
+            {
+                id: 7,
+                name: "7. 聲調夢幻馬車",
+                subtitle: "練習：一二三四聲與生活詞彙",
+                type: "tones_challenge",
+                questions: [
+                    { word: "媽", symbol: "ㄇㄚ", tone: "一聲" },
+                    { word: "麻", symbol: "ㄇㄚˊ", tone: "二聲" },
+                    { word: "馬", symbol: "ㄇㄚˇ", tone: "三聲" },
+                    { word: "罵", symbol: "ㄇㄚˋ", tone: "四聲" }
+                ],
+                rewardStar: 6,
+                rewardCharId: "buzz",
+                description: "聽聲調，選擇正確的粉紅車廂！"
+            }
+        ];
+
+        // --- 3. DREAMY TOY STORY CHARACTERS SYSTEM ---
+        const CHARACTERS = [
+            {
+                id: "solider",
+                name: "夢幻綠小兵",
+                requiredStars: 0,
+                icon: "🎀",
+                color: "bg-pink-300 border-pink-400 text-pink-950",
+                quote: "隊伍準備完畢，開啟夢幻注音之旅！"
+            },
+            {
+                id: "slinky",
+                name: "粉紅彈簧狗",
+                requiredStars: 3,
+                icon: "🐩",
+                color: "bg-purple-300 border-purple-400 text-purple-950",
+                quote: "伸長脖子，你學得太快太優秀啦！"
+            },
+            {
+                id: "piggy",
+                name: "粉紅火腿豬",
+                requiredStars: 7,
+                icon: "🐖",
+                color: "bg-pink-400 border-pink-500 text-white",
+                quote: "存了滿滿的注音知識呢！大豐收！"
+            },
+            {
+                id: "rex",
+                name: "可愛抱抱龍",
+                requiredStars: 11,
+                icon: "🦖",
+                color: "bg-emerald-300 border-emerald-400 text-emerald-950",
+                quote: "哇！高興得要跳舞了，你太厲害了！"
+            },
+            {
+                id: "alien",
+                name: "星空三眼怪",
+                requiredStars: 15,
+                icon: "🦄",
+                color: "bg-indigo-300 border-indigo-400 text-indigo-950",
+                quote: "魔法爪子選中了注音小公主～"
+            },
+            {
+                id: "woody",
+                name: "牛仔胡迪",
+                requiredStars: 20,
+                icon: "🤠",
+                color: "bg-amber-300 border-amber-400 text-amber-950",
+                quote: "飛向夢幻星空！你是最棒的冒險家！"
+            },
+            {
+                id: "buzz",
+                name: "巴斯光年",
+                requiredStars: 26,
+                icon: "👑",
+                color: "bg-purple-400 border-purple-500 text-white",
+                quote: "浩瀚無垠！歡迎加入夢幻注音防衛隊！"
+            }
+        ];
+
+        // Current active gameplay variables
+        let currentStage = null;
+        let currentQuestionIndex = 0;
+        let stageQuestions = [];
+        let currentTargetSymbol = "";
+        let audioContext = null;
+
+        // Init Web Audio API Sound Generator
+        function initAudio() {
+            if (!audioContext) {
+                audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            }
+        }
+
+        function playSound(type) {
+            initAudio();
+            if (!audioContext) return;
+
+            try {
+                const osc = audioContext.createOscillator();
+                const gain = audioContext.createGain();
+                osc.connect(gain);
+                gain.connect(audioContext.destination);
+
+                const now = audioContext.currentTime;
+
+                if (type === 'correct') {
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(587.33, now); // D5
+                    osc.frequency.exponentialRampToValueAtTime(880, now + 0.15); // A5
+                    gain.gain.setValueAtTime(0.25, now);
+                    gain.gain.exponentialRampToValueAtTime(0.01, now + 0.4);
+                    osc.start(now);
+                    osc.stop(now + 0.4);
+                } else if (type === 'wrong') {
+                    osc.type = 'triangle';
+                    osc.frequency.setValueAtTime(300, now);
+                    osc.frequency.exponentialRampToValueAtTime(200, now + 0.2);
+                    gain.gain.setValueAtTime(0.2, now);
+                    gain.gain.exponentialRampToValueAtTime(0.01, now + 0.3);
+                    osc.start(now);
+                    osc.stop(now + 0.3);
+                } else if (type === 'click') {
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(400, now);
+                    gain.gain.setValueAtTime(0.1, now);
+                    gain.gain.exponentialRampToValueAtTime(0.01, now + 0.1);
+                    osc.start(now);
+                    osc.stop(now + 0.1);
+                }
+            } catch (e) {
+                console.log("Audio play error:", e);
+            }
+        }
+
+        // Web Speech API for Zhuyin Pronunciation (Taiwan standard zh-TW with Pronunciation Map Fix)
+        function speakZhuyin(text, rate = 0.8) {
+            if ('speechSynthesis' in window) {
+                try {
+                    window.speechSynthesis.cancel();
+
+                    // Convert pure Bopomofo to phonetic mapping if available
+                    let speechText = text;
+                    if (ZHUYIN_PRONUNCIATION_MAP[text]) {
+                        speechText = ZHUYIN_PRONUNCIATION_MAP[text];
+                    }
+
+                    const utterance = new SpeechSynthesisUtterance(speechText);
+                    utterance.lang = 'zh-TW';
+                    utterance.rate = rate;
+                    utterance.pitch = 1.25; // Higher pitch friendly voice for young children
+
+                    // Find explicit zh-TW / Taiwan voice if present on iOS/Android/Chrome
+                    const voices = window.speechSynthesis.getVoices();
+                    const twVoice = voices.find(v => v.lang === 'zh-TW' || v.lang === 'zh_TW' || v.name.includes('Mei-Jia') || v.name.includes('Taiwan'));
+                    if (twVoice) {
+                        utterance.voice = twVoice;
+                    }
+
+                    window.speechSynthesis.speak(utterance);
+                } catch (e) {
+                    console.warn("Speech Synthesis non-fatal error:", e);
+                }
+            }
+        }
+
+        // App Navigation Function
+        function switchTab(tabName) {
+            playSound('click');
+            document.getElementById('view-home').classList.add('hidden');
+            document.getElementById('view-map').classList.add('hidden');
+            document.getElementById('view-game').classList.add('hidden');
+            document.getElementById('view-collection').classList.add('hidden');
+
+            if (tabName === 'home') {
+                document.getElementById('view-home').classList.remove('hidden');
+            } else if (tabName === 'map') {
+                renderStageMap();
+                document.getElementById('view-map').classList.remove('hidden');
+            } else if (tabName === 'collection') {
+                renderCollection();
+                document.getElementById('view-collection').classList.remove('hidden');
+            } else if (tabName === 'game') {
+                document.getElementById('view-game').classList.remove('hidden');
+            }
+        }
+
+        // Save & Load State from LocalStorage
+        function loadState() {
+            try {
+                const saved = localStorage.getItem(LOCAL_STORAGE_KEY);
+                if (saved) {
+                    gameState = JSON.parse(saved);
+                }
+            } catch (e) {
+                console.error("Local storage error:", e);
+            }
+            updateStarDisplay();
+            checkAutoUnlockCharacters();
+        }
+
+        function saveState() {
+            try {
+                localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(gameState));
+            } catch (e) {
+                console.error("Local storage save failed:", e);
+            }
+            updateStarDisplay();
+        }
+
+        function updateStarDisplay() {
+            document.getElementById('star-count').innerText = gameState.stars;
+        }
+
+        function checkAutoUnlockCharacters() {
+            CHARACTERS.forEach(char => {
+                if (gameState.stars >= char.requiredStars && !gameState.unlockedChars.includes(char.id)) {
+                    gameState.unlockedChars.push(char.id);
+                }
+            });
+        }
+
+        function renderStageMap() {
+            const container = document.getElementById('stages-container');
+            container.innerHTML = '';
+
+            STAGES.forEach((stage) => {
+                const isUnlocked = gameState.unlockedStages.includes(stage.id);
+                const stars = gameState.stageScores[stage.id] || 0;
+
+                const card = document.createElement('div');
+                card.className = `cute-card rounded-3xl p-5 transition-all duration-300 relative flex flex-col justify-between ${
+                    isUnlocked 
+                    ? 'hover:scale-[1.02] cursor-pointer border-pink-300' 
+                    : 'opacity-60 grayscale bg-white/40'
+                }`;
+
+                card.innerHTML = `
+                    <div>
+                        <div class="flex justify-between items-start mb-2">
+                            <span class="text-xs font-bold px-3 py-1 bg-pink-200 text-pink-800 rounded-full">
+                                關卡 ${stage.id}
+                            </span>
+                            <div class="flex items-center space-x-1">
+                                ${[1, 2, 3].map(i => `
+                                    <i class="fa-solid fa-star text-sm ${i <= (stars > 0 ? 3 : 0) ? 'text-amber-400' : 'text-slate-300'}"></i>
+                                `).join('')}
+                            </div>
+                        </div>
+                        <h3 class="text-xl font-black text-pink-600 mb-1">${stage.name}</h3>
+                        <p class="text-xs text-purple-600 font-bold mb-3">${stage.subtitle}</p>
+                    </div>
+
+                    <div class="mt-4 flex justify-between items-center">
+                        <span class="text-xs text-slate-500 font-bold">可獲 +${stage.rewardStar} 魔法星</span>
+                        <button class="${isUnlocked ? 'bg-pink-400 text-white hover:bg-pink-300 border-b-4 border-pink-600' : 'bg-slate-300 text-slate-500'} font-black text-sm px-4 py-2 rounded-xl shadow">
+                            ${isUnlocked ? (stars > 0 ? '再次挑戰' : '開始闖關') : '<i class="fa-solid fa-lock"></i> 未解鎖'}
+                        </button>
+                    </div>
+                `;
+
+                if (isUnlocked) {
+                    card.onclick = () => startStage(stage.id);
+                }
+
+                container.appendChild(card);
+            });
+        }
+
+        function startStage(stageId) {
+            initAudio();
+            currentStage = STAGES.find(s => s.id === stageId);
+            currentQuestionIndex = 0;
+
+            document.getElementById('game-stage-title').innerText = currentStage.name;
+            document.getElementById('game-instruction').innerText = currentStage.description;
+
+            // Prepare Stage Questions
+            if (currentStage.type === 'listen_choose') {
+                stageQuestions = generateListenChooseQuestions(currentStage.symbols, 5);
+            } else if (currentStage.type === 'match_pairs') {
+                stageQuestions = generateMatchPairQuestions(currentStage.symbols);
+            } else if (currentStage.type === 'pindu_basic' || currentStage.type === 'tones_challenge') {
+                stageQuestions = [...currentStage.questions];
+            }
+
+            switchTab('game');
+            renderQuestion();
+        }
+
+        function generateListenChooseQuestions(symbols, count) {
+            let qList = [];
+            for (let i = 0; i < count; i++) {
+                const target = symbols[Math.floor(Math.random() * symbols.length)];
+                let choices = [target];
+                
+                const available = ["ㄅ", "ㄆ", "ㄇ", "ㄈ", "ㄉ", "ㄊ", "ㄋ", "ㄌ", "ㄍ", "ㄎ", "ㄏ", "ㄚ", "ㄛ", "ㄜ"].filter(s => s !== target);
+                while (choices.length < 3) {
+                    const rand = available[Math.floor(Math.random() * available.length)];
+                    if (!choices.includes(rand)) choices.push(rand);
+                }
+                
+                choices.sort(() => Math.random() - 0.5);
+                qList.push({ target, choices });
+            }
+            return qList;
+        }
+
+        function generateMatchPairQuestions(symbols) {
+            return [{ symbols: [...symbols] }];
+        }
+
+        function renderQuestion() {
+            const area = document.getElementById('game-interactive-area');
+            const feedbackBox = document.getElementById('game-feedback-box');
+            feedbackBox.innerText = "";
+            feedbackBox.className = "w-full min-h-[50px] mt-4 flex items-center justify-center text-lg font-bold text-center rounded-2xl p-2";
+
+            document.getElementById('game-progress-text').innerText = `題目 ${currentQuestionIndex + 1} / ${stageQuestions.length}`;
+
+            const q = stageQuestions[currentQuestionIndex];
+
+            if (currentStage.type === 'listen_choose') {
+                currentTargetSymbol = q.target;
+                
+                area.innerHTML = `
+                    <div class="grid grid-cols-3 gap-4 w-full max-w-md my-auto">
+                        ${q.choices.map(symbol => `
+                            <button onclick="handleAnswer('${symbol}', this)" class="bg-gradient-to-b from-pink-100 to-pink-200 hover:from-pink-200 hover:to-pink-300 active:scale-95 text-pink-700 bopomofo-font text-5xl md:text-6xl h-28 md:h-32 rounded-3xl border-b-8 border-pink-300 flex items-center justify-center shadow-lg transition-all">
+                                ${symbol}
+                            </button>
+                        `).join('')}
+                    </div>
+                `;
+
+                setTimeout(() => {
+                    speakZhuyin(`請找出：${currentTargetSymbol}`);
+                }, 300);
+
+            } else if (currentStage.type === 'match_pairs') {
+                let items = [...q.symbols, ...q.symbols].sort(() => Math.random() - 0.5);
+
+                area.innerHTML = `
+                    <div class="grid grid-cols-4 gap-3 w-full max-w-md my-auto" id="match-grid">
+                        ${items.map((sym, idx) => `
+                            <button data-symbol="${sym}" data-idx="${idx}" onclick="handleMatchTap(this)" class="match-btn bg-purple-200 text-purple-900 bopomofo-font text-4xl h-20 rounded-2xl border-b-4 border-purple-400 flex items-center justify-center shadow transition-all">
+                                ${sym}
+                            </button>
+                        `).join('')}
+                    </div>
+                `;
+
+                speakZhuyin("選出兩個一樣的注音符號喔！");
+
+            } else if (currentStage.type === 'pindu_basic') {
+                currentTargetSymbol = q.result;
+
+                area.innerHTML = `
+                    <div class="flex flex-col items-center justify-center w-full">
+                        <div class="flex items-center space-x-3 my-4">
+                            <div class="bg-pink-400 text-white bopomofo-font text-5xl p-4 rounded-2xl shadow-md border-b-4 border-pink-600">${q.pinyin[0]}</div>
+                            <span class="text-3xl text-purple-500 font-bold">+</span>
+                            <div class="bg-purple-400 text-white bopomofo-font text-5xl p-4 rounded-2xl shadow-md border-b-4 border-purple-600">${q.pinyin[1]}</div>
+                            <span class="text-3xl text-purple-500 font-bold">=</span>
+                            <div class="bg-pink-200 text-pink-800 text-4xl font-black p-4 rounded-2xl shadow-md border-b-4 border-pink-400">❓</div>
+                        </div>
+
+                        <p class="text-purple-700 font-bold my-2 text-lg">拼出來是什麼聲音呢？（提示：${q.label}）</p>
+
+                        <div class="flex space-x-4 my-3">
+                            <button onclick="handleAnswer('${q.result}', this)" class="bg-pink-500 hover:bg-pink-400 text-white bopomofo-font text-4xl px-8 py-4 rounded-2xl border-b-4 border-pink-700 shadow-xl">
+                                ${q.result}
+                            </button>
+                        </div>
+                    </div>
+                `;
+
+                setTimeout(() => {
+                    speakZhuyin(`${q.pinyin[0]}，${q.pinyin[1]}，拼起來是什麼呢？`);
+                }, 300);
+
+            } else if (currentStage.type === 'tones_challenge') {
+                currentTargetSymbol = q.symbol;
+
+                area.innerHTML = `
+                    <div class="flex flex-col items-center justify-center w-full">
+                        <div class="text-6xl font-black text-pink-600 mb-2">${q.word}</div>
+                        <p class="text-purple-700 font-bold mb-6 text-xl">請選出 ${q.word} 的正確聲調 (${q.tone})</p>
+
+                        <button onclick="handleAnswer('${q.symbol}', this)" class="bg-gradient-to-r from-pink-400 to-purple-400 hover:from-pink-300 hover:to-purple-300 text-white bopomofo-font text-5xl font-black px-10 py-5 rounded-3xl border-b-8 border-purple-500 shadow-xl">
+                            ${q.symbol}
+                        </button>
+                    </div>
+                `;
+
+                setTimeout(() => {
+                    speakZhuyin(`${q.word}，${q.symbol}`);
+                }, 300);
+            }
+        }
+
+        function repeatInstructionSpeech() {
+            playSound('click');
+            if (currentStage.type === 'listen_choose' || currentStage.type === 'pindu_basic' || currentStage.type === 'tones_challenge') {
+                speakZhuyin(`請找出：${currentTargetSymbol}`);
+            } else {
+                speakZhuyin(currentStage.description);
+            }
+        }
+
+        function handleAnswer(selected, btnElem) {
+            const feedbackBox = document.getElementById('game-feedback-box');
+
+            if (selected === currentTargetSymbol) {
+                playSound('correct');
+                speakZhuyin("太棒了！答對了！");
+
+                if (btnElem) {
+                    btnElem.classList.remove('bg-pink-100');
+                    btnElem.classList.add('bg-emerald-300', 'text-emerald-950', 'scale-105');
+                }
+
+                feedbackBox.innerText = "✨ 太棒了！答對囉！ ✨";
+                feedbackBox.classList.add('bg-pink-100', 'text-pink-700', 'border-2', 'border-pink-300');
+
+                setTimeout(() => {
+                    currentQuestionIndex++;
+                    if (currentQuestionIndex < stageQuestions.length) {
+                        renderQuestion();
+                    } else {
+                        finishStage();
+                    }
+                }, 1200);
+
+            } else {
+                playSound('wrong');
+                speakZhuyin("再試試看喔！你可以的！");
+
+                if (btnElem) {
+                    btnElem.classList.add('shake-error');
+                    setTimeout(() => btnElem.classList.remove('shake-error'), 500);
+                }
+
+                feedbackBox.innerText = "🌸 沒關係，再試一次看看！";
+                feedbackBox.classList.add('bg-purple-100', 'text-purple-700');
+            }
+        }
+
+        let firstCard = null;
+        function handleMatchTap(btn) {
+            playSound('click');
+            const sym = btn.getAttribute('data-symbol');
+            
+            // Speak the symbol name clearly
+            speakZhuyin(sym);
+
+            if (!firstCard) {
+                firstCard = btn;
+                btn.classList.add('ring-4', 'ring-pink-400', 'scale-105');
+            } else if (firstCard === btn) {
+                firstCard.classList.remove('ring-4', 'ring-pink-400', 'scale-105');
+                firstCard = null;
+            } else {
+                if (firstCard.getAttribute('data-symbol') === sym) {
+                    playSound('correct');
+                    firstCard.classList.add('bg-emerald-300', 'opacity-50');
+                    btn.classList.add('bg-emerald-300', 'opacity-50');
+                    firstCard.disabled = true;
+                    btn.disabled = true;
+                    firstCard = null;
+
+                    const remaining = document.querySelectorAll('.match-btn:not([disabled])');
+                    if (remaining.length === 0) {
+                        setTimeout(() => finishStage(), 1000);
+                    }
+                } else {
+                    playSound('wrong');
+                    btn.classList.add('shake-error');
+                    firstCard.classList.add('shake-error');
+                    setTimeout(() => {
+                        if (firstCard) firstCard.classList.remove('ring-4', 'ring-pink-400', 'scale-105', 'shake-error');
+                        btn.classList.remove('shake-error');
+                        firstCard = null;
+                    }, 500);
+                }
+            }
+        }
+
+        function finishStage() {
+            playSound('correct');
+
+            const starsGained = currentStage.rewardStar;
+            gameState.stars += starsGained;
+            gameState.stageScores[currentStage.id] = 3;
+
+            if (currentStage.id < STAGES.length && !gameState.unlockedStages.includes(currentStage.id + 1)) {
+                gameState.unlockedStages.push(currentStage.id + 1);
+            }
+
+            checkAutoUnlockCharacters();
+            saveState();
+
+            document.getElementById('modal-stars-gained').innerText = `+${starsGained}`;
+
+            const charReward = CHARACTERS.find(c => c.id === currentStage.rewardCharId);
+            const banner = document.getElementById('unlocked-character-banner');
+            if (charReward && gameState.unlockedChars.includes(charReward.id)) {
+                banner.classList.remove('hidden');
+                document.getElementById('unlocked-char-content').innerHTML = `
+                    <span class="text-3xl">${charReward.icon}</span>
+                    <span class="font-black text-pink-600 text-lg">${charReward.name}</span>
+                `;
+                document.getElementById('modal-encouragement').innerText = `"${charReward.quote}"`;
+            } else {
+                banner.classList.add('hidden');
+                document.getElementById('modal-encouragement').innerText = `"太棒了！你是最優雅優秀的注音小公主！"`;
+            }
+
+            speakZhuyin("恭喜通關！你獲得了夢幻星星！");
+            document.getElementById('modal-success').classList.remove('hidden');
+        }
+
+        function renderCollection() {
+            const container = document.getElementById('characters-container');
+            container.innerHTML = '';
+
+            CHARACTERS.forEach(char => {
+                const isUnlocked = gameState.unlockedChars.includes(char.id) || gameState.stars >= char.requiredStars;
+
+                const card = document.createElement('div');
+                card.className = `cute-card rounded-3xl p-4 flex flex-col items-center text-center border-4 transition-all ${
+                    isUnlocked 
+                    ? `${char.color} shadow-lg hover:scale-105` 
+                    : 'bg-white/40 border-slate-200 opacity-50 grayscale'
+                }`;
+
+                card.innerHTML = `
+                    <div class="text-6xl md:text-7xl mb-2 filter drop-shadow">
+                        ${isUnlocked ? char.icon : '🔒'}
+                    </div>
+                    <h4 class="font-black text-lg mb-1">${char.name}</h4>
+                    <span class="text-xs font-bold px-2.5 py-0.5 rounded-full ${isUnlocked ? 'bg-white/60 text-pink-800' : 'bg-slate-200 text-slate-500'}">
+                        ${isUnlocked ? '已解鎖' : `需 ⭐️ ${char.requiredStars}`}
+                    </span>
+                    ${isUnlocked ? `<p class="text-xs mt-2 italic font-bold">"${char.quote}"</p>` : ''}
+                `;
+
+                container.appendChild(card);
+            });
+        }
+
+        window.onload = function() {
+            loadState();
+        };
+    </script>
+</body>
+</html>
